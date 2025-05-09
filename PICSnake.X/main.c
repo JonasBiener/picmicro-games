@@ -13,13 +13,12 @@
 int main (void) {
     
     InitEngine();
-    ResetRandomSeed();
+    BeginRandomEntropyCollection();
     GLCD_Text2Out(0,0,"PIC-Snake");
     GLCD_Text2Out(1,0,"V - 1.0");
     GLCD_Text2Out(2,0,"J.Biener");
-    // GLCD_Value2Out_00(2,0,RandomInRange(0, 9999), 4);
-    while (PORTBbits.RB1) Nop();
-    
+    while (PORTBbits.RB1 || !IsTimeElapsedMS(100)) Nop();
+    ResetRandomEntropy();
     InitSnake();
     PrintSnake();
     ResetTimer();

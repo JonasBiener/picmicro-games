@@ -45,7 +45,7 @@ char InitEngine (void) {
     TMR3 = 0;
     CCPTMRS0bits.C1TSEL = 0b01; // User Timer3 for CCP1
     CCP1CONbits.CCP1M = 0b1011; // Special event trigger
-    CCPR1 = 1000; // Set CCP5 initial value
+    CCPR1 = INT16_MAX; // Set CCP5 initial value
     // PIE1bits.CCP1IE = 1; // Enable CCP1 interrupt
     PIR1bits.CCP1IF = 0; // Clear CCP1 interrupt flag
     
@@ -83,14 +83,13 @@ int RandomInRange (int min, int max) {
     return min + random_number % (max - min + 1);
 }
 
-void ResetRandomSeed (void) {
-    uint16_t eeprom_value = 0;
-    eeprom_value += EEPROM_Read(0x00);
-    eeprom_value += EEPROM_Read(0x01) << 8;
-    random_number = eeprom_value++;
-    EEPROM_Write(0x00, (char)(eeprom_value & 0x00FF));
-    EEPROM_Write(0x01, (char)(eeprom_value >> 8));
-    random_number = 1;
+void BeginRandomEntropyCollection (void) {
+    T3CONbits.TMR3ON = 1;
+}
+
+void ResetRandomEntropy (void) {
+    T3CONbits.TMR3ON = 0;
+    random_number = TMR3;
 }
 
 char InputAvailable (void) {

@@ -13,7 +13,7 @@ extern "C" {
 
 #define MAX_X_FIELD 21
 #define MAX_Y_FIELD 12
-#define MAX_SNAKE_LENGTH 20
+#define MAX_SNAKE_LENGTH 40
 
 // Stores game-state of the snake
 typedef struct SnakeState {

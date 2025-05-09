@@ -54,8 +54,17 @@ char TickSnake (void) {
     }
     // Check if snake ate apple
     if (new_x_head == apple->x_field && new_y_head == apple->y_field) {
-        apple->x_field = RandomInRange(1, MAX_X_FIELD - 2);
-        apple->y_field = RandomInRange(1, MAX_Y_FIELD - 2);
+        for (unsigned char i = 0; i < 10; i++) {
+            unsigned char intersect = 0;
+            apple->x_field = RandomInRange(1, MAX_X_FIELD - 2);
+            apple->y_field = RandomInRange(1, MAX_Y_FIELD - 2);
+            for (unsigned char j = 0; i < snake->length; i++) {
+                intersect += snake->x_fields[j] == apple->x_field;
+                intersect += snake->y_fields[j] == apple->y_field;
+            } 
+            if (!intersect) 
+                break;
+        }
         if (snake->length < MAX_SNAKE_LENGTH) 
             snake->length++;
         snake_score++;
@@ -93,33 +102,43 @@ void PrintSnake (void) {
             unsigned char y_coord_1 = yd * 2;
             unsigned char y_coord_2 = yd * 2 + 1;
             unsigned char output = 0x00; 
-            if (x_coord == apple->x_field){
-                unsigned char apple_bits = 0x00;
-                if (xd % 4 == 0 || xd % 4 == 3) apple_bits = 0b0110;
-                else if (xd % 4 == 1 || xd % 4 == 2) apple_bits = 0b1111;
-                if (y_coord_2 == apple->y_field) apple_bits <<= 4;
-                else if (y_coord_1 != apple->y_field) apple_bits = 0x00;
-                output |= apple_bits;
-            }
             if (x_coord == snake->x_fields[0]) {
                 unsigned char head_bits = 0x00;
-                if (xd % 4 == 0 || xd % 4 == 3) head_bits = 0b1111;
-                else if (xd % 4 == 1 || xd % 4 == 2) head_bits = 0b1001;
-                if (y_coord_1 == snake->y_fields[0]) {
+                if (xd % 4 == 0 || xd % 4 == 3) 
+                    head_bits = 0b1111;
+                else if (xd % 4 == 1 || xd % 4 == 2) 
+                    head_bits = 0b1001;
+                if (y_coord_1 == snake->y_fields[0])
                     output |= head_bits;
-                }
-                else if (y_coord_2 == snake->y_fields[0]) {
+                else if (y_coord_2 == snake->y_fields[0])
                     output |= head_bits << 4;
-                }
             }
             for (char i = 1; i < snake->length; i++) {
-                if (x_coord != snake->x_fields[i]) continue;
-                if (y_coord_1 == snake->y_fields[i]) output |= 0x0F;
-                else if (y_coord_2 == snake->y_fields[i]) output |= 0xF0;
+                if (x_coord != snake->x_fields[i]) 
+                    continue;
+                if (y_coord_1 == snake->y_fields[i]) 
+                    output |= 0x0F;
+                else if (y_coord_2 == snake->y_fields[i]) 
+                    output |= 0xF0;
             }
-            if (xd <= 2 || xd >= MAX_X_FIELD * 4 - 3) output = 0xFF;
-            if (yd == 0) output |= 0x07;
-            else if (yd == MAX_Y_FIELD / 2 - 1) output |= 0xE0;
+            if (x_coord == apple->x_field){
+                unsigned char apple_bits = 0x00;
+                if (xd % 4 == 0 || xd % 4 == 3) 
+                    apple_bits = 0b0110;
+                else if (xd % 4 == 1 || xd % 4 == 2) 
+                    apple_bits = 0b1111;
+                if (y_coord_2 == apple->y_field) 
+                    apple_bits <<= 4;
+                else if (y_coord_1 != apple->y_field) 
+                    apple_bits = 0x00;
+                output ^= apple_bits;
+            }
+            if (xd <= 2 || xd >= MAX_X_FIELD * 4 - 3) 
+                output = 0xFF;
+            if (yd == 0) 
+                output |= 0x07;
+            else if (yd == MAX_Y_FIELD / 2 - 1) 
+                output |= 0xE0;
             GLCD_Write(output, DTA);
         }
         GLCD_Write(0x00, DTA);

@@ -23,8 +23,11 @@ void ResetTimer (void);
 // Retrieves random-value from PNR
 int RandomInRange (int min, int max);
 
+// Starts the random-seed-timer
+void BeginRandomEntropyCollection (void);
+
 // Resets the PNR-seed
-void ResetRandomSeed (void);
+void ResetRandomEntropy (void);
 
 // Get if user-input is available in buffer
 char InputAvailable (void);
