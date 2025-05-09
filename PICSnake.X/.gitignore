@@ -1,0 +1,10 @@
+build/
+debug/
+dist/
+
+*.log
+*.log.inx
+
+nbproject/*
+!nbproject/configurations.xml
+!nbproject/project.xml
